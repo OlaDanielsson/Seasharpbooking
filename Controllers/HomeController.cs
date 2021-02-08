@@ -25,7 +25,7 @@ namespace Seasharpbooking.Controllers
 
         public IActionResult Privacy() // Forsättning
         {
-            return View();
+            return View();//hampus bästa kommentar
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)] //Fortsättning 2
