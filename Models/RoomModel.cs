@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Seasharpbooking.Models
 {
-    public class RoomModel
+    public class RoomModel // hejsan
     {
     }
 }
