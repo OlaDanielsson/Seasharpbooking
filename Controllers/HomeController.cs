@@ -18,7 +18,7 @@ namespace Seasharpbooking.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public IActionResult Index() //Hej det är jag som är Simon
         {
             return View();
         }
