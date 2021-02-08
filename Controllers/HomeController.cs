@@ -29,7 +29,7 @@ namespace Seasharpbooking.Controllers
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)] //Fortsättning 2
-        public IActionResult Error() //Fortsättning 15miljoner
+        public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
