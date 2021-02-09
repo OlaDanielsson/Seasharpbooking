@@ -12,6 +12,5 @@ namespace Seasharpbooking.Models
         public DateTime EndDate { get; set; }
         public int RoomId { get; set; }
         public int GuestId { get; set; } //hur fan skriver man denna kopplingen då den ska hämtas från annan API?
-        public RoomModel Room { get; set; } //koppling till Room
     }
 }
