@@ -15,19 +15,67 @@ namespace Seasharpbooking.Controllers
         {
             try
             {
-                List<RoomModel> Room = new List<RoomModel>();
-                HttpClient client = new HttpClient();
-                var response = await client.GetAsync("http://localhost:31328/Actor%22"); //denna ska ändras till rätt adress
-                string jsonresponse = await response.Content.ReadAsStringAsync();
-                Room = JsonConvert.DeserializeObject<List<RoomModel>>(jsonresponse);
+                List<RoomModel> room = new List<RoomModel>();
 
-                return View(Room);
+                var response = await ApiConnection.ApiClient.GetAsync("RoomModels");
+                string jsonresponse = await response.Content.ReadAsStringAsync();
+                room = JsonConvert.DeserializeObject<List<RoomModel>>(jsonresponse);
+
+                return View(room);
             }
             catch (Exception e)
             {
                 System.Diagnostics.Debug.WriteLine(e);
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Privacy", "Home");
             }
+        }
+
+        public ActionResult Create(int id = 0)
+        {
+            try
+            {
+                if (id == 0)
+                {
+                    return View(new RoomModel());
+                }
+
+                else
+                {
+                    HttpResponseMessage response = ApiConnection.ApiClient.GetAsync("RoomModels/" + id.ToString()).Result;
+                    return View(response.Content.ReadAsAsync<RoomModel>().Result);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+                return View();
+            }
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(RoomModel room)
+        {
+            // Om ID är 0 skickar man en ny film till API
+            if (room.Id == 0)
+            {
+                var postTask = ApiConnection.ApiClient.PostAsJsonAsync<RoomModel>("RoomModels", room);
+                postTask.Wait();
+
+                var result = postTask.Result;
+            }
+            // Om ID inte är 0 uppdaterar man en redan befintlig film hos API med hjälp av PUT
+            else
+            {
+                HttpResponseMessage response = ApiConnection.ApiClient.PutAsJsonAsync("RoomModels/" + room.Id, room).Result;
+            }
+
+            return RedirectToAction("Index");
+        }
+        public async Task<IActionResult> Delete(int id)
+        {
+            HttpResponseMessage response = ApiConnection.ApiClient.DeleteAsync("RoomModels/" + id.ToString()).Result;
+            return RedirectToAction("Index");
         }
     }
 }
