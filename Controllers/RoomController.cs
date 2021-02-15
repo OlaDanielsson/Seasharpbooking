@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using Seasharpbooking.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -11,6 +13,15 @@ namespace Seasharpbooking.Controllers
 {
     public class RoomController : Controller
     {
+
+        //Ändrat här
+        //private readonly CategoryModel _context;
+
+        //public RoomController(CategoryModel context)
+        //{
+        //    _context = context;
+        //}
+
         public async Task<IActionResult> Index()
         {
             try
@@ -30,20 +41,37 @@ namespace Seasharpbooking.Controllers
             }
         }
 
-        public ActionResult Create(int id = 0)
+        public async Task<IActionResult> Create()//(int id = 0)
         {
             try
             {
-                if (id == 0)
-                {
-                    return View(new RoomModel());
-                }
+                //if (id == 0)
+                //{
+                    List<CategoryModel> Category = new List<CategoryModel>();
 
-                else
-                {
-                    HttpResponseMessage response = ApiConnection.ApiClient.GetAsync("RoomModels/" + id.ToString()).Result;
-                    return View(response.Content.ReadAsAsync<RoomModel>().Result);
-                }
+                    var response = await ApiConnection.ApiClient.GetAsync("CategoryModels");
+                    string jsonresponse = await response.Content.ReadAsStringAsync();
+                    Category = JsonConvert.DeserializeObject<List<CategoryModel>>(jsonresponse);
+                    ////La till den raden här under
+                    ViewData["CategoryId"] = new SelectList(Category, "Id", "Description");
+                    HttpResponseMessage responseRoom = ApiConnection.ApiClient.GetAsync("RoomModels/").Result; // + id.ToString() , det låg intill "RoomModels/", men inte nödvändigt.
+
+                return View(new RoomModel());
+                //}
+
+                //else
+                //{
+                //    List<CategoryModel> Category = new List<CategoryModel>();
+
+                //    var response = await ApiConnection.ApiClient.GetAsync("CategoryModels");
+                //    string jsonresponse = await response.Content.ReadAsStringAsync();
+                //    Category = JsonConvert.DeserializeObject<List<CategoryModel>>(jsonresponse);
+                //    ////La till den raden här under
+                //    ViewData["hejsan"] = new SelectList(Category, "Id", "Description");
+                //    HttpResponseMessage responseRoom = ApiConnection.ApiClient.GetAsync("RoomModels/" + id.ToString()).Result;
+
+                //    return View(responseRoom.Content.ReadAsAsync<RoomModel>().Result);
+                //}
             }
             catch (Exception ex)
             {
