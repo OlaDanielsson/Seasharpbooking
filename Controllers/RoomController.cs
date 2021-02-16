@@ -39,12 +39,13 @@ namespace Seasharpbooking.Controllers
             {
                 List<CategoryModel> Category = new List<CategoryModel>();
 
-                var response = await ApiConnection.ApiClient.GetAsync("CategoryModels");
-                string jsonresponse = await response.Content.ReadAsStringAsync();
-                Category = JsonConvert.DeserializeObject<List<CategoryModel>>(jsonresponse);
-                    
-                ViewData["CategoryId"] = new SelectList(Category, "Id", "Description");
-                HttpResponseMessage responseRoom = ApiConnection.ApiClient.GetAsync("RoomModels/").Result; 
+                    var response = await ApiConnection.ApiClient.GetAsync("CategoryModels");
+                    string jsonresponse = await response.Content.ReadAsStringAsync();
+                    Category = JsonConvert.DeserializeObject<List<CategoryModel>>(jsonresponse);
+                    ////La till den raden här under
+                    ViewData["CategoryId"] = new SelectList(Category, "Id", "Description");
+
+                    HttpResponseMessage responseRoom = ApiConnection.ApiClient.GetAsync("RoomModels/").Result; // + id.ToString() , det låg intill "RoomModels/", men inte nödvändigt.
 
                 return View(new RoomModel());
 

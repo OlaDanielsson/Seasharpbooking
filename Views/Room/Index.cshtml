@@ -43,8 +43,9 @@
                 @Html.DisplayFor(modelItem => item.RoomNumber)
             </td>
             <td>
-                <a href="@Url.Action("Create", "Category", new { id = item.Id})"> Redigera</a> |
-                <a href="@Url.Action("Delete", "Category", new { id = item.Id})"> Ta bort</a>
+                @*Ändrar från Create till Edit, samt från Category till Room*@
+                <a href="@Url.Action("Edit", "Room", new { id = item.Id})"> Redigera</a> |
+                <a href="@Url.Action("Delete", "Room", new { id = item.Id})"> Ta bort</a>
             </td>
         </tr>
 }
