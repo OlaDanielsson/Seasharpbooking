@@ -4,25 +4,25 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Typ av rum</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Lägg till ny typ av rum</a>
 </p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Description)
+                @*@Html.DisplayNameFor(model => model.Description)*@ Typ av rum
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ImgList)
+                @*@Html.DisplayNameFor(model => model.ImgList)*@ Bild
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.NumberOfBeds)
+                @*@Html.DisplayNameFor(model => model.NumberOfBeds)*@ Antal bäddar
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Price)
+                @*@Html.DisplayNameFor(model => model.Price)*@ Pris/Dygn
             </th>
             <th></th>
         </tr>
@@ -47,10 +47,11 @@
                 @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
                 @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
             </td>*@
-            <td>
-                <a href="@Url.Action("Create", "Category", new { id = item.Id})"> Redigera</a> |
-                <a href="@Url.Action("Delete", "Category", new { id = item.Id})"> Ta bort</a>
-            </td>
+        <td>
+            @*Ändrar från Create till Edit, samt från Category till Room*@
+            <a href="@Url.Action("Edit", "Category", new { id = item.Id})"> Redigera</a> |
+            <a href="@Url.Action("Delete", "Category", new { id = item.Id})"> Ta bort</a>
+        </td>
         </tr>
 }
     </tbody>
