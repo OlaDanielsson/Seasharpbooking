@@ -41,37 +41,21 @@ namespace Seasharpbooking.Controllers
             }
         }
 
-        public async Task<IActionResult> Create()//(int id = 0)
+        public async Task<IActionResult> Create()
         {
             try
             {
-                //if (id == 0)
-                //{
-                    List<CategoryModel> Category = new List<CategoryModel>();
+                List<CategoryModel> Category = new List<CategoryModel>();
 
-                    var response = await ApiConnection.ApiClient.GetAsync("CategoryModels");
-                    string jsonresponse = await response.Content.ReadAsStringAsync();
-                    Category = JsonConvert.DeserializeObject<List<CategoryModel>>(jsonresponse);
-                    ////La till den raden här under
-                    ViewData["CategoryId"] = new SelectList(Category, "Id", "Description");
-                    HttpResponseMessage responseRoom = ApiConnection.ApiClient.GetAsync("RoomModels/").Result; // + id.ToString() , det låg intill "RoomModels/", men inte nödvändigt.
+                var response = await ApiConnection.ApiClient.GetAsync("CategoryModels");
+                string jsonresponse = await response.Content.ReadAsStringAsync();
+                Category = JsonConvert.DeserializeObject<List<CategoryModel>>(jsonresponse);
+                    
+                ViewData["CategoryId"] = new SelectList(Category, "Id", "Description");
+                HttpResponseMessage responseRoom = ApiConnection.ApiClient.GetAsync("RoomModels/").Result; 
 
                 return View(new RoomModel());
-                //}
 
-                //else
-                //{
-                //    List<CategoryModel> Category = new List<CategoryModel>();
-
-                //    var response = await ApiConnection.ApiClient.GetAsync("CategoryModels");
-                //    string jsonresponse = await response.Content.ReadAsStringAsync();
-                //    Category = JsonConvert.DeserializeObject<List<CategoryModel>>(jsonresponse);
-                //    ////La till den raden här under
-                //    ViewData["hejsan"] = new SelectList(Category, "Id", "Description");
-                //    HttpResponseMessage responseRoom = ApiConnection.ApiClient.GetAsync("RoomModels/" + id.ToString()).Result;
-
-                //    return View(responseRoom.Content.ReadAsAsync<RoomModel>().Result);
-                //}
             }
             catch (Exception ex)
             {

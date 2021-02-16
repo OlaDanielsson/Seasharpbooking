@@ -13,7 +13,7 @@ namespace Seasharpbooking
 
         static ApiConnection()
         {
-            ApiClient.BaseAddress = new Uri("http://localhost:57101/");
+            ApiClient.BaseAddress = new Uri("http://193.10.202.81/ConnectingAPI/");
             ApiClient.DefaultRequestHeaders.Clear();
             ApiClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
