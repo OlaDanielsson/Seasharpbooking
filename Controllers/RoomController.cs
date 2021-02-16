@@ -54,6 +54,7 @@ namespace Seasharpbooking.Controllers
                     Category = JsonConvert.DeserializeObject<List<CategoryModel>>(jsonresponse);
                     ////La till den raden här under
                     ViewData["CategoryId"] = new SelectList(Category, "Id", "Description");
+
                     HttpResponseMessage responseRoom = ApiConnection.ApiClient.GetAsync("RoomModels/").Result; // + id.ToString() , det låg intill "RoomModels/", men inte nödvändigt.
 
                 return View(new RoomModel());
@@ -93,13 +94,40 @@ namespace Seasharpbooking.Controllers
                 var result = postTask.Result;
             }
             // Om ID inte är 0 uppdaterar man en redan befintlig film hos API med hjälp av PUT
-            else
-            {
-                HttpResponseMessage response = ApiConnection.ApiClient.PutAsJsonAsync("RoomModels/" + room.Id, room).Result;
-            }
+            //else
+            //{
+            //    HttpResponseMessage response = ApiConnection.ApiClient.PutAsJsonAsync("RoomModels/" + room.Id, room).Result;
+            //}
 
             return RedirectToAction("Index");
         }
+
+
+        //Editfunktion om ett rum behöver ändras
+        public async Task<IActionResult> Edit(int id)//(int id = 0)
+        {
+            List<CategoryModel> Category = new List<CategoryModel>();
+
+            var response = await ApiConnection.ApiClient.GetAsync("CategoryModels");
+            string jsonresponse = await response.Content.ReadAsStringAsync();
+            Category = JsonConvert.DeserializeObject<List<CategoryModel>>(jsonresponse);
+            ////La till den raden här under
+            ViewData["CategoryId"] = new SelectList(Category, "Id", "Description");
+
+
+            HttpResponseMessage responseRoom = ApiConnection.ApiClient.GetAsync("RoomModels/" + id.ToString()).Result;
+            //return View(new RoomModel());
+            return View(responseRoom.Content.ReadAsAsync<RoomModel>().Result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(RoomModel room)
+        {
+            HttpResponseMessage response = ApiConnection.ApiClient.PutAsJsonAsync("RoomModels/" + room.Id, room).Result;
+            return RedirectToAction("Index");
+        }
+
+
         public async Task<IActionResult> Delete(int id)
         {
             HttpResponseMessage response = ApiConnection.ApiClient.DeleteAsync("RoomModels/" + id.ToString()).Result;
