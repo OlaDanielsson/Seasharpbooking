@@ -22,7 +22,7 @@
                 @*@Html.DisplayNameFor(model => model.EndDate)*@ Utcheckning
             </th>
             <th>
-                @*@Html.DisplayNameFor(model => model.RoomId)*@ Rum @*Här bör vi kanske ha en länk direkt kopplat till det aktuella rummet*@
+                @*@Html.DisplayNameFor(model => model.RoomId)*@ categori id @*Här bör vi kanske ha en länk direkt kopplat till det aktuella rummet*@
             </th>
             <th>
                 @*@Html.DisplayNameFor(model => model.GuestId)*@ Gäst @*Gästens för och efternamn*@
@@ -43,7 +43,7 @@
                 @Html.DisplayFor(modelItem => item.EndDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.RoomId)
+                @Html.DisplayFor(modelItem => item.CategoryId)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.GuestId)

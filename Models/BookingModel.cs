@@ -11,6 +11,8 @@ namespace Seasharpbooking.Models
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public int RoomId { get; set; }
-        public int GuestId { get; set; } 
+        public int GuestId { get; set; }
+        public int CategoryId { get; set; }
+
     }
 }
