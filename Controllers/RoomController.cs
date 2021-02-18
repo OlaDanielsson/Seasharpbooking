@@ -18,11 +18,29 @@ namespace Seasharpbooking.Controllers
         {
             try
             {
-                List<RoomModel> roomlist = new List<RoomModel>();
+                List<RoomdescModel> roomlist = new List<RoomdescModel>();
 
                 var roomresponse = await ApiConnection.ApiClient.GetAsync("RoomModels");
                 string jsonroomresponse = await roomresponse.Content.ReadAsStringAsync();
-                roomlist = JsonConvert.DeserializeObject<List<RoomModel>>(jsonroomresponse);
+                roomlist = JsonConvert.DeserializeObject<List<RoomdescModel>>(jsonroomresponse);
+
+                List<CategoryModel> Categorylist = new List<CategoryModel>();
+
+                var categoryresponse = await ApiConnection.ApiClient.GetAsync("CategoryModels");
+                string jsoncategoryresponse = await categoryresponse.Content.ReadAsStringAsync();
+                Categorylist = JsonConvert.DeserializeObject<List<CategoryModel>>(jsoncategoryresponse);
+
+                foreach (var item in roomlist)
+                {
+                    foreach (var element in Categorylist)
+                    {
+                        if (item.CategoryId == element.Id)
+                        {
+                            item.Description = element.Description;
+                            break;
+                        }
+                    }
+                }
 
                 return View(roomlist);
             }
