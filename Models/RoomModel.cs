@@ -11,8 +11,9 @@ namespace Seasharpbooking.Models
         public int CategoryId { get; set; }
         public int Floor { get; set; }
         public int RoomNumber { get; set; }
+        public CategoryModel Category { get; set; }
 
-        public List<CategoryModel> Category { get; set; }
+        public List<CategoryModel> CategoryList { get; set; }
 
     }
 }
