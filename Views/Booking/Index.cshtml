@@ -13,8 +13,8 @@
     <thead>
         <tr>
             @*<th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>*@
+            @Html.DisplayNameFor(model => model.Id)
+        </th>*@
             <th>
                 @*@Html.DisplayNameFor(model => model.StartDate)*@ Incheckning
             </th>
@@ -22,7 +22,10 @@
                 @*@Html.DisplayNameFor(model => model.EndDate)*@ Utcheckning
             </th>
             <th>
-                @*@Html.DisplayNameFor(model => model.RoomId)*@ categori id @*Här bör vi kanske ha en länk direkt kopplat till det aktuella rummet*@
+                @*@Html.DisplayNameFor(model => model.RoomId)*@ Kategori Beskrivning @*Här bör vi kanske ha en länk direkt kopplat till det aktuella rummet*@
+            </th>
+            <th>
+                @*@Html.DisplayNameFor(model => model.GuestId)*@ Rums Id @*Gästens för och efternamn*@
             </th>
             <th>
                 @*@Html.DisplayNameFor(model => model.GuestId)*@ Gäst @*Gästens för och efternamn*@
@@ -34,8 +37,8 @@
    @foreach (var item in Model) {
         <tr>
             @*<td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>*@
+            @Html.DisplayFor(modelItem => item.Id)
+        </td>*@
             <td>
                 @Html.DisplayFor(modelItem => item.StartDate)
             </td>
@@ -43,7 +46,10 @@
                 @Html.DisplayFor(modelItem => item.EndDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CategoryId)
+                @Html.DisplayFor(modelItem => item.CatDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RoomId)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.GuestId)
