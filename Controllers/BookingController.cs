@@ -85,14 +85,14 @@ namespace Seasharpbooking.Controllers
                     }
                     else
                     {
-                        ViewData["norooms"] = "inga lediga rum";
-                        return RedirectToAction("Privacy", "Home");
+                        ViewData["norooms"] = "Det finns inga lediga rum av din preferenser";
+                        return View();
                     }
                 }
                 else
                 {
-                    ViewData["wrongtime"] = "idiot";
-                    return RedirectToAction("Privacy", "Home");
+                    ViewData["wrongtime"] = "Vänligen fyll i en korrekt tid. Slutdatumet måste vara senare än startdatumet.";                   
+                    return View();
                 }
             }
             catch (Exception ex)
