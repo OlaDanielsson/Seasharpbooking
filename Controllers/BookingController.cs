@@ -16,62 +16,27 @@ namespace Seasharpbooking.Controllers
         {
             try
             {
-                List<BookingModel> bookinglist = new List<BookingModel>();
+                List<BookingModel> bookingList = await ApiConnection.GetBookingList();
+                List<CategoryModel> categoryList = await ApiConnection.GetCategoryList();
+                List<RoomdescModel> roomdescList = await ApiConnection.GetRoomdescList();
 
-                var response = await ApiConnection.ApiClient.GetAsync("BookingModels");
-                string jsonresponse = await response.Content.ReadAsStringAsync();
-                bookinglist = JsonConvert.DeserializeObject<List<BookingModel>>(jsonresponse);
-
-                List<CategoryModel> Categorylist = new List<CategoryModel>();
-
-                var categoryresponse = await ApiConnection.ApiClient.GetAsync("CategoryModels");
-                string jsoncategoryresponse = await categoryresponse.Content.ReadAsStringAsync();
-                Categorylist = JsonConvert.DeserializeObject<List<CategoryModel>>(jsoncategoryresponse);
-
-                List<RoomdescModel> roomlist = new List<RoomdescModel>();
-
-                var roomresponse = await ApiConnection.ApiClient.GetAsync("RoomModels");
-                string jsonroomresponse = await roomresponse.Content.ReadAsStringAsync();
-                roomlist = JsonConvert.DeserializeObject<List<RoomdescModel>>(jsonroomresponse);
-
-                foreach (var item in bookinglist)    //placerar kategoribeskrivning i bokningslistan
-                {
-                    foreach (var element in roomlist)
-                    {
-                        if (item.RoomId == element.Id)
-                        {
-                            foreach (var x in Categorylist)
-                            {
-                                if (x.Id == element.CategoryId)
-                                {
-                                    item.CatDescription = x.Description;
-
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-                return View(bookinglist);
+                BookingHandler.PlaceCategoryInBooking(bookingList, categoryList, roomdescList); //placerar kategoribeskrivning i bokningslistan
+                return View(bookingList);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(e);
+                System.Diagnostics.Debug.WriteLine(ex);
                 return RedirectToAction("Privacy", "Home");
             }
         }
+    
         public async Task<IActionResult> Create()
         {
             try
             {
-                List<CategoryModel> Categorylist = new List<CategoryModel>();
+                List<CategoryModel> categoryList = await ApiConnection.GetCategoryList();
 
-                var categoryresponse = await ApiConnection.ApiClient.GetAsync("CategoryModels");
-                string jsoncategoryresponse = await categoryresponse.Content.ReadAsStringAsync();
-                Categorylist = JsonConvert.DeserializeObject<List<CategoryModel>>(jsoncategoryresponse);
-
-                ViewData["Desc"] = new SelectList(Categorylist, "Id", "Description"); //för att fixa viewdata
-
+                ViewData["Desc"] = new SelectList(categoryList, "Id", "Description"); //för att fixa viewdata
                 HttpResponseMessage responseRoom = ApiConnection.ApiClient.GetAsync("CategoryModels/").Result;
 
                 return View(new BookingModel());
@@ -85,106 +50,48 @@ namespace Seasharpbooking.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(BookingModel booking)
         {
+
             try
             {
-                List<CategoryModel> Categorylist = new List<CategoryModel>();
-
-                var categoryresponse = await ApiConnection.ApiClient.GetAsync("CategoryModels");
-                string jsoncategoryresponse = await categoryresponse.Content.ReadAsStringAsync();
-                Categorylist = JsonConvert.DeserializeObject<List<CategoryModel>>(jsoncategoryresponse);
-
-                List<RoomModel> roomlist = new List<RoomModel>();
-
-                var roomresponse = await ApiConnection.ApiClient.GetAsync("RoomModels");
-                string jsonroomresponse = await roomresponse.Content.ReadAsStringAsync();
-                roomlist = JsonConvert.DeserializeObject<List<RoomModel>>(jsonroomresponse);
-
-                List<BookingModel> bookinglist = new List<BookingModel>();
-
-                var bookingresponse = await ApiConnection.ApiClient.GetAsync("Bookingmodels");
-                string jsonbookingresponse = await bookingresponse.Content.ReadAsStringAsync();
-                bookinglist = JsonConvert.DeserializeObject<List<BookingModel>>(jsonbookingresponse);
+                List<CategoryModel> categoryList = await ApiConnection.GetCategoryList();
+                List<RoomModel> roomList = await ApiConnection.GetRoomList();
+                List<BookingModel> bookingList = await ApiConnection.GetBookingList();
 
                 List<RoomModel> qualifiedrooms = new List<RoomModel>();
                 List<RoomModel> corcatroom = new List<RoomModel>();
 
+                int bookingstart = int.Parse(DateTime.Parse(booking.StartDate.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1)); //parsar datetime till int
+                int bookingend = int.Parse(DateTime.Parse(booking.EndDate.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1)); //parsar datetime till int
 
-                int bookingstart = int.Parse(DateTime.Parse(booking.StartDate.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1));
-                int bookingend = int.Parse(DateTime.Parse(booking.EndDate.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1));
+                if (bookingstart < bookingend) //kollar så bokningens start datum inte är efter slutdatum
+                {
+                    corcatroom.AddRange(from item in roomList
+                                        where item.CategoryId == booking.CategoryId
+                                        select item);
+                    List<RoomModel> compareList = new List<RoomModel>();
 
-                if (bookingstart < bookingend)
-                {           
-                    foreach (var item in roomlist) //loopar igenom listan room
+                    BookingHandler.RoomAvailableCheck(bookingList, qualifiedrooms, corcatroom, bookingstart, bookingend, compareList); //Kollar så rummen inte är bokade
+
+                    if (qualifiedrooms.Count > 0) //kollar ifall det finns tillgängliga rum
                     {
-                        if (item.CategoryId == booking.CategoryId) //om något item i listan room har samma categori Id som användarinmatningen så går den vidare
-                        {
-                            corcatroom.Add(item);
-                        }
-                    }
-                    List<RoomModel> CompareList = new List<RoomModel>();
-                    foreach (var item in corcatroom) //loopar igenom bokningslistan
-                    {
-                        foreach (var element in bookinglist)
-                        {
-                            if (element.RoomId == item.Id)
-                            {
-                                int start = int.Parse(DateTime.Parse(element.StartDate.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1));
-                                int end = int.Parse(DateTime.Parse(element.EndDate.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1));
+                        var room = qualifiedrooms.First(); 
+                        BookingModel finalBooking = BookingHandler.SetFinalBooking(booking, room);
 
-
-                                if ((start < bookingstart && end < bookingstart) || (start > bookingend && end > bookingend)) // testar tidsintervallet, finns ingen bokning lägg till rum i listan
-                                {
-                                    qualifiedrooms.Add(item);
-                                    break;
-                                }
-                                else
-                                {
-                                    break;
-                                }
-                            }
-                            else
-                            {
-                                CompareList.Add(item);
-                            }
-                            if (bookinglist.Count == CompareList.Count)
-                            {
-                                qualifiedrooms.Add(item);
-                                break;
-                            }
-                        }
-                        CompareList.Clear();
-                    }
-                
-                    if (qualifiedrooms.Count > 0)
-                    {
-                        var room = qualifiedrooms.First();
-                        //HttpResponseMessage responseBooking = ApiConnection.ApiClient.GetAsync("BookingModels/" + room.ToString()).Result; 
-
-                        BookingModel finalBooking = new BookingModel();
-                        finalBooking.Id = booking.Id;
-                        finalBooking.StartDate = booking.StartDate;
-                        finalBooking.EndDate = booking.EndDate;
-                        finalBooking.RoomId = room.Id;
-                        finalBooking.GuestId = booking.GuestId;
-
-                        var postTask = ApiConnection.ApiClient.PostAsJsonAsync<BookingModel>("BookingModels", finalBooking);
+                        var postTask = ApiConnection.ApiClient.PostAsJsonAsync<BookingModel>("BookingModels", finalBooking); 
                         postTask.Wait();
 
                         var result = postTask.Result;
                         return RedirectToAction("Confirmation", "Booking");
-
                     }
                     else
                     {
                         ViewData["norooms"] = "inga lediga rum";
-                        //ViewData.norooms = ("inga lediga rum");
                         return RedirectToAction("Privacy", "Home");
                     }
                 }
                 else
                 {
                     ViewData["wrongtime"] = "idiot";
-                    //ViewData.wrongtime = "idiot";
                     return RedirectToAction("Privacy", "Home");
                 }
             }
@@ -192,8 +99,9 @@ namespace Seasharpbooking.Controllers
             {
                 System.Diagnostics.Debug.WriteLine(ex.Message);
                 return View();
-            }
+            }        
         }
+
         public ActionResult Confirmation()
         {
             return View();
@@ -203,6 +111,5 @@ namespace Seasharpbooking.Controllers
             HttpResponseMessage response = ApiConnection.ApiClient.DeleteAsync("BookingModels/" + id.ToString()).Result;
             return RedirectToAction("Index");
         }
-
     }
 }

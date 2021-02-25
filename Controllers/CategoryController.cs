@@ -18,17 +18,13 @@ namespace Seasharpbooking.Controllers
         {
             try
             {
-                List<CategoryModel> Category = new List<CategoryModel>();
+                List<CategoryModel> categoryList = await ApiConnection.GetCategoryList();
 
-                var response = await ApiConnection.ApiClient.GetAsync("CategoryModels");
-                string jsonresponse = await response.Content.ReadAsStringAsync();
-                Category = JsonConvert.DeserializeObject<List<CategoryModel>>(jsonresponse);
-
-                return View(Category);
+                return View(categoryList);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(e);
+                System.Diagnostics.Debug.WriteLine(ex);
                 return RedirectToAction("Privacy", "Home");
             }
         }
@@ -36,7 +32,7 @@ namespace Seasharpbooking.Controllers
         public async Task<IActionResult> Create()
         {
             try
-            {
+            {               
                 HttpResponseMessage responseCategory = ApiConnection.ApiClient.GetAsync("CategoryModels/").Result;
                 return View(new CategoryModel());
             }
@@ -45,7 +41,6 @@ namespace Seasharpbooking.Controllers
                 System.Diagnostics.Debug.WriteLine(ex.Message);
                 return View();
             }
-
         }
 
         [HttpPost]

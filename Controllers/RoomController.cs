@@ -18,21 +18,12 @@ namespace Seasharpbooking.Controllers
         {
             try
             {
-                List<RoomdescModel> roomlist = new List<RoomdescModel>();
+                List<RoomdescModel> roomdescList = await ApiConnection.GetRoomdescList();
+                List<CategoryModel> categoryList = await ApiConnection.GetCategoryList();
 
-                var roomresponse = await ApiConnection.ApiClient.GetAsync("RoomModels");
-                string jsonroomresponse = await roomresponse.Content.ReadAsStringAsync();
-                roomlist = JsonConvert.DeserializeObject<List<RoomdescModel>>(jsonroomresponse);
-
-                List<CategoryModel> Categorylist = new List<CategoryModel>();
-
-                var categoryresponse = await ApiConnection.ApiClient.GetAsync("CategoryModels");
-                string jsoncategoryresponse = await categoryresponse.Content.ReadAsStringAsync();
-                Categorylist = JsonConvert.DeserializeObject<List<CategoryModel>>(jsoncategoryresponse);
-
-                foreach (var item in roomlist)
+                foreach (var item in roomdescList)
                 {
-                    foreach (var element in Categorylist)
+                    foreach (var element in categoryList)
                     {
                         if (item.CategoryId == element.Id)
                         {
@@ -41,12 +32,11 @@ namespace Seasharpbooking.Controllers
                         }
                     }
                 }
-
-                return View(roomlist);
+                return View(roomdescList);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(e);
+                System.Diagnostics.Debug.WriteLine(ex);
                 return RedirectToAction("Privacy", "Home");
             }
         }
@@ -55,13 +45,10 @@ namespace Seasharpbooking.Controllers
         {
             try
             {
-                List<CategoryModel> Category = new List<CategoryModel>();
+                List<CategoryModel> categoryList = await ApiConnection.GetCategoryList();
 
-                    var response = await ApiConnection.ApiClient.GetAsync("CategoryModels");
-                    string jsonresponse = await response.Content.ReadAsStringAsync();
-                    Category = JsonConvert.DeserializeObject<List<CategoryModel>>(jsonresponse);
-                    //La till den raden här under
-                    ViewData["CategoryId"] = new SelectList(Category, "Id", "Description");
+                //La till den raden här under
+                ViewData["CategoryId"] = new SelectList(categoryList, "Id", "Description");
 
                     HttpResponseMessage responseRoom = ApiConnection.ApiClient.GetAsync("RoomModels/").Result;
 
@@ -94,13 +81,9 @@ namespace Seasharpbooking.Controllers
         //Editfunktion om ett rum behöver ändras
         public async Task<IActionResult> Edit(int id)
         {
-            List<CategoryModel> Category = new List<CategoryModel>();
+            List<CategoryModel> categoryList = await ApiConnection.GetCategoryList();
 
-            var response = await ApiConnection.ApiClient.GetAsync("CategoryModels");
-            string jsonresponse = await response.Content.ReadAsStringAsync();
-            Category = JsonConvert.DeserializeObject<List<CategoryModel>>(jsonresponse);
-            ////La till den raden här under
-            ViewData["CategoryId"] = new SelectList(Category, "Id", "Description");
+            ViewData["CategoryId"] = new SelectList(categoryList, "Id", "Description");
 
 
             HttpResponseMessage responseRoom = ApiConnection.ApiClient.GetAsync("RoomModels/" + id.ToString()).Result;
