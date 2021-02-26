@@ -50,7 +50,6 @@ namespace Seasharpbooking.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(BookingModel booking)
         {
-
             try
             {
                 List<CategoryModel> categoryList = await ApiConnection.GetCategoryList();
@@ -101,7 +100,6 @@ namespace Seasharpbooking.Controllers
                 return View();
             }        
         }
-
         public ActionResult Confirmation()
         {
             return View();

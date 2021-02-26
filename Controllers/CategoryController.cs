@@ -19,7 +19,6 @@ namespace Seasharpbooking.Controllers
             try
             {
                 List<CategoryModel> categoryList = await ApiConnection.GetCategoryList();
-
                 return View(categoryList);
             }
             catch (Exception ex)
@@ -28,7 +27,6 @@ namespace Seasharpbooking.Controllers
                 return RedirectToAction("Privacy", "Home");
             }
         }
-
         public async Task<IActionResult> Create()
         {
             try
@@ -42,7 +40,6 @@ namespace Seasharpbooking.Controllers
                 return View();
             }
         }
-
         [HttpPost]
         public async Task<IActionResult> Create(CategoryModel category)
         {
@@ -53,23 +50,18 @@ namespace Seasharpbooking.Controllers
 
             return RedirectToAction("Index");
         }
-
         //Editfunktion om en kategori behöver ändras
         public async Task<IActionResult> Edit(int id)
         {
-
             HttpResponseMessage responseCategory = ApiConnection.ApiClient.GetAsync("CategoryModels/" + id.ToString()).Result;
             return View(responseCategory.Content.ReadAsAsync<CategoryModel>().Result);
         }
-
         [HttpPost]
         public async Task<IActionResult> Edit(CategoryModel category)
         {
             HttpResponseMessage response = ApiConnection.ApiClient.PutAsJsonAsync("CategoryModels/" + category.Id, category).Result;
             return RedirectToAction("Index");
         }
-
-
         public async Task<IActionResult> Delete(int id)
         {
             HttpResponseMessage response = ApiConnection.ApiClient.DeleteAsync("CategoryModels/" + id.ToString()).Result;
