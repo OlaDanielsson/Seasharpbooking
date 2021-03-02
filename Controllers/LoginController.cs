@@ -37,7 +37,7 @@ namespace Seasharpbooking.Controllers
                 }
             }
 
-            if (loginOk.Status == true)
+            if (loginOk.Status == true && loginOk.Role.First() == "RoomAdmin")
             {
                 await SetUserAuthenticated(loginOk);
 
@@ -60,6 +60,12 @@ namespace Seasharpbooking.Controllers
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(identity));
+        }
+
+        public async Task<IActionResult> SignOut(AdminLogin admin)
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Index", "Home");
         }
     }
 }
