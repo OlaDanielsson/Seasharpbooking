@@ -69,19 +69,44 @@ namespace Seasharpbooking.Controllers
                                         select item);
                     List<RoomModel> compareList = new List<RoomModel>();
 
-                    BookingHandler.RoomAvailableCheck(bookingList, qualifiedrooms, corcatroom, bookingstart, bookingend, compareList); //Kollar så rummen inte är bokade
+                    //bool test = false;
+                    //if (BookingHandler.BookingTest(bookingList, corcatroom, test) == true)
+                    //{
+                    //    BookingHandler.RoomAvailableCheck(bookingList, qualifiedrooms, corcatroom, bookingstart, bookingend, compareList); //Kollar så rummen inte är bokade
+                    //}         
+                    //else
+                    //{
+                    //    foreach (var item in corcatroom)
+                    //    {
+                    //        qualifiedrooms.Add(item);
+                    //    }
+                    //}
 
-                    if (qualifiedrooms.Count > 0) //kollar ifall det finns tillgängliga rum
+                    BookingHandler.RoomAvailableCheckV2(bookingList, corcatroom, bookingstart, bookingend, qualifiedrooms);
+
+                    if (corcatroom.Count > 0) //kollar ifall det finns tillgängliga rum
                     {
-                        var room = qualifiedrooms.First(); 
+                        var room = corcatroom.First();
                         BookingModel finalBooking = BookingHandler.SetFinalBooking(booking, room);
 
-                        var postTask = ApiConnection.ApiClient.PostAsJsonAsync<BookingModel>("BookingModels", finalBooking); 
+                        var postTask = ApiConnection.ApiClient.PostAsJsonAsync<BookingModel>("BookingModels", finalBooking);
                         postTask.Wait();
 
                         var result = postTask.Result;
                         return RedirectToAction("Confirmation", "Booking");
                     }
+
+                    //if (qualifiedrooms.Count > 0) //kollar ifall det finns tillgängliga rum
+                    //{
+                    //    var room = qualifiedrooms.First(); 
+                    //    BookingModel finalBooking = BookingHandler.SetFinalBooking(booking, room);
+
+                    //    var postTask = ApiConnection.ApiClient.PostAsJsonAsync<BookingModel>("BookingModels", finalBooking); 
+                    //    postTask.Wait();
+
+                    //    var result = postTask.Result;
+                    //    return RedirectToAction("Confirmation", "Booking");
+                    //}
                     else
                     {
                         ViewData["norooms"] = "Det finns inga lediga rum av din preferenser";
