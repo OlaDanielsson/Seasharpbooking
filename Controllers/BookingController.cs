@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using Seasharpbooking.Models;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace Seasharpbooking.Controllers
 {
+    [Authorize]
     public class BookingController : Controller
     {
         public async Task<IActionResult> Index()
@@ -61,28 +63,21 @@ namespace Seasharpbooking.Controllers
 
                 int bookingstart = int.Parse(DateTime.Parse(booking.StartDate.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1)); //parsar datetime till int
                 int bookingend = int.Parse(DateTime.Parse(booking.EndDate.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1)); //parsar datetime till int
+                int dateToday = int.Parse(DateTime.Parse(DateTime.Today.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1));
 
-                if (bookingstart < bookingend) //kollar så bokningens start datum inte är efter slutdatum
+                if (bookingstart < bookingend && bookingstart >= dateToday) //kollar så bokningens start datum inte är efter slutdatum
                 {
                     corcatroom.AddRange(from item in roomList
                                         where item.CategoryId == booking.CategoryId
-                                        select item);
-                    List<RoomModel> compareList = new List<RoomModel>();
+                                        select item);                                       
 
-                    //bool test = false;
-                    //if (BookingHandler.BookingTest(bookingList, corcatroom, test) == true)
-                    //{
-                    //    BookingHandler.RoomAvailableCheck(bookingList, qualifiedrooms, corcatroom, bookingstart, bookingend, compareList); //Kollar så rummen inte är bokade
-                    //}         
-                    //else
-                    //{
-                    //    foreach (var item in corcatroom)
-                    //    {
-                    //        qualifiedrooms.Add(item);
-                    //    }
-                    //}
+                    List<BookingModel> corcatbooking = new List<BookingModel>();
 
-                    BookingHandler.RoomAvailableCheckV2(bookingList, corcatroom, bookingstart, bookingend, qualifiedrooms);
+                    //Används inte än men kan tas tag i imorgon.
+                    //BookingHandler.GetCorCatBookingList(bookingList, corcatbooking, booking.CategoryId); //Hämtar lista med enbart bokningar av korrekta kategori.
+                    //---------------------------------------------------------------------------------------------------------------------------------------------
+
+                    BookingHandler.RoomAvailableCheckV2(bookingList, corcatroom, bookingstart, bookingend);
 
                     if (corcatroom.Count > 0) //kollar ifall det finns tillgängliga rum
                     {
@@ -96,27 +91,27 @@ namespace Seasharpbooking.Controllers
                         return RedirectToAction("Confirmation", "Booking");
                     }
 
-                    //if (qualifiedrooms.Count > 0) //kollar ifall det finns tillgängliga rum
-                    //{
-                    //    var room = qualifiedrooms.First(); 
-                    //    BookingModel finalBooking = BookingHandler.SetFinalBooking(booking, room);
-
-                    //    var postTask = ApiConnection.ApiClient.PostAsJsonAsync<BookingModel>("BookingModels", finalBooking); 
-                    //    postTask.Wait();
-
-                    //    var result = postTask.Result;
-                    //    return RedirectToAction("Confirmation", "Booking");
-                    //}
+                    
                     else
                     {
                         ViewData["norooms"] = "Det finns inga lediga rum av din preferenser";
-                        return View();
+                        List<CategoryModel> categoryListSend = await ApiConnection.GetCategoryList();
+
+                        ViewData["Desc"] = new SelectList(categoryListSend, "Id", "Description"); //för att fixa viewdata
+                        HttpResponseMessage responseRoom = ApiConnection.ApiClient.GetAsync("CategoryModels/").Result;
+
+                        return View(new BookingModel());
                     }
                 }
                 else
                 {
-                    ViewData["wrongtime"] = "Vänligen fyll i en korrekt tid. Slutdatumet måste vara senare än startdatumet.";                   
-                    return View();
+                    ViewData["wrongtime"] = "Vänligen fyll i en korrekt tid. Slutdatumet måste vara senare än startdatumet.";
+                    List<CategoryModel> categoryListSend = await ApiConnection.GetCategoryList();
+
+                    ViewData["Desc"] = new SelectList(categoryListSend, "Id", "Description"); //för att fixa viewdata
+                    HttpResponseMessage responseRoom = ApiConnection.ApiClient.GetAsync("CategoryModels/").Result;
+
+                    return View(new BookingModel());
                 }
             }
             catch (Exception ex)

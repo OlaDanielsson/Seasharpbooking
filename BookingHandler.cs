@@ -45,7 +45,21 @@ namespace Seasharpbooking
             return test;
         }
 
-        public static void RoomAvailableCheckV2(List<BookingModel> bookingList, List<RoomModel> corcatroom, int bookingstart, int bookingend, List<RoomModel> qualifiedrooms)
+        //Används ej
+        //Placerar endast bokningar med rätt kategori i ny separat lista för att optimera sökningar-------------------- 
+        public static void GetCorCatBookingList(List<BookingModel> bookingList, List<BookingModel>corCatBooking, int CategoryIdIn) 
+        {
+            foreach (var item in bookingList)
+            {
+                if (item.CategoryId == CategoryIdIn)
+                {
+                    corCatBooking.Add(item);
+                }
+            }
+        }
+        //------------------------------------------------------------------------------
+
+        public static void RoomAvailableCheckV2(List<BookingModel> bookingList, List<RoomModel> corcatroom, int bookingstart, int bookingend)
         {
             for (int i=0; i<corcatroom.Count; i++)
             {                
@@ -55,12 +69,8 @@ namespace Seasharpbooking
                     {
                         int start = int.Parse(DateTime.Parse(element.StartDate.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1));
                         int end = int.Parse(DateTime.Parse(element.EndDate.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1));
-
-                        if ((start < bookingstart && end < bookingstart) || (start > bookingend && end > bookingend)) //Om tiderna krockar
-                        {
-                            
-                        }
-                        else
+     
+                        if ((bookingstart >= start && bookingstart <= end) || (bookingend >= start && bookingend <= end) || (bookingstart < start && bookingend > end))
                         {
                             corcatroom.Remove(corcatroom[i]);
                             i--;
@@ -96,39 +106,7 @@ namespace Seasharpbooking
             }
         }
 
-            //    foreach (var item in corcatroom) //loopar igenom bokningslistan
-            //    {
-            //        foreach (var element in bookingList)
-            //        {
-            //            if (element.RoomId == item.Id)
-            //            {
-            //                int start = int.Parse(DateTime.Parse(element.StartDate.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1));
-            //                int end = int.Parse(DateTime.Parse(element.EndDate.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1));
-
-            //                if ((start < bookingstart && end < bookingstart) || (start > bookingend && end > bookingend)) // testar tidsintervallet, finns ingen bokning lägg till rum i listan
-            //                {
-            //                    qualifiedrooms.Add(item);
-            //                    break;
-            //                }
-            //                else
-            //                {
-            //                    break;
-            //                }
-            //            }
-            //            else
-            //            {
-            //                compareList.Add(item);
-            //            }
-            //            if (bookingList.Count == compareList.Count)
-            //            {
-            //                qualifiedrooms.Add(item);
-            //                break;
-            //            }
-            //        }
-            //        compareList.Clear();
-            //    }
-            //}
-            public static BookingModel SetFinalBooking(BookingModel booking, RoomModel room)
+        public static BookingModel SetFinalBooking(BookingModel booking, RoomModel room)
         {
             BookingModel finalBooking = new BookingModel();
             finalBooking.Id = booking.Id;
@@ -138,6 +116,5 @@ namespace Seasharpbooking
             finalBooking.GuestId = booking.GuestId;
             return finalBooking;
         }
-
     }
 }

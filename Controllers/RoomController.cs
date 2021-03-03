@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using Seasharpbooking.Models;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace Seasharpbooking.Controllers
 {
+    [Authorize]
     public class RoomController : Controller
     {
 
