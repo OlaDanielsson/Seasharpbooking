@@ -116,5 +116,6 @@ namespace Seasharpbooking
             finalBooking.GuestId = booking.GuestId;
             return finalBooking;
         }
+
     }
 }

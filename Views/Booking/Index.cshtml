@@ -12,9 +12,9 @@
 <table class="table">
     <thead>
         <tr>
-            @*<th>
-            @Html.DisplayNameFor(model => model.Id)
-        </th>*@
+            <th>
+            @*@Html.DisplayNameFor(model => model.Id)*@ BookningsID
+            </th>
             <th>
                 @*@Html.DisplayNameFor(model => model.StartDate)*@ Incheckning
             </th>
@@ -36,9 +36,9 @@
     <tbody>
    @foreach (var item in Model) {
         <tr>
-            @*<td>
+            <td>
             @Html.DisplayFor(modelItem => item.Id)
-        </td>*@
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.StartDate)
             </td>
@@ -56,7 +56,7 @@
             </td>
             <td>
                 @*Ändrar från Create till Edit, samt från Category till Room*@
-                <a href="@Url.Action("Edit", "Booking", new { id = item.Id})"> Redigera</a> |
+                <a href="@Url.Action("Edit", "Booking", new { id = item.Id, CategoryId = item.CategoryId, EndDate = item.EndDate, StartDate = item.StartDate, GuestId = item.GuestId})"> Redigera</a> |
                 <a href="@Url.Action("Delete", "Booking", new { id = item.Id})"> Ta bort</a>
             </td>
         </tr>

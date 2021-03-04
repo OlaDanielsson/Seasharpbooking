@@ -54,6 +54,5 @@ namespace Seasharpbooking
             roomdescList = JsonConvert.DeserializeObject<List<RoomdescModel>>(jsonresponse);
             return roomdescList;
         }
-
     }
 }
