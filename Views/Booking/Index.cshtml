@@ -13,7 +13,7 @@
     <thead>
         <tr>
             <th>
-            @*@Html.DisplayNameFor(model => model.Id)*@ BookningsID
+            @*@Html.DisplayNameFor(model => model.Id)*@ Booknings ID
             </th>
             <th>
                 @*@Html.DisplayNameFor(model => model.StartDate)*@ Incheckning
@@ -22,13 +22,13 @@
                 @*@Html.DisplayNameFor(model => model.EndDate)*@ Utcheckning
             </th>
             <th>
-                @*@Html.DisplayNameFor(model => model.RoomId)*@ Kategori Beskrivning @*Här bör vi kanske ha en länk direkt kopplat till det aktuella rummet*@
+                @*@Html.DisplayNameFor(model => model.RoomId)*@ Rums Typ @*Här bör vi kanske ha en länk direkt kopplat till det aktuella rummet*@
             </th>
             <th>
-                @*@Html.DisplayNameFor(model => model.GuestId)*@ Rums Id @*Gästens för och efternamn*@
+                @*@Html.DisplayNameFor(model => model.GuestId)*@ Rums ID @*Gästens för och efternamn*@
             </th>
             <th>
-                @*@Html.DisplayNameFor(model => model.GuestId)*@ Gäst @*Gästens för och efternamn*@
+                @*@Html.DisplayNameFor(model => model.GuestId)*@ Gäst ID @*Gästens för och efternamn*@
             </th>
             <th></th>
         </tr>
@@ -57,7 +57,7 @@
             <td>
                 @*Ändrar från Create till Edit, samt från Category till Room*@
                 <a href="@Url.Action("Edit", "Booking", new { id = item.Id, CategoryId = item.CategoryId, EndDate = item.EndDate, StartDate = item.StartDate, GuestId = item.GuestId})"> Redigera</a> |
-                <a href="@Url.Action("Delete", "Booking", new { id = item.Id})"> Ta bort</a>
+                <a href="@Url.Action("SuperDelete", "Booking", new { id = item.Id})"> Ta bort</a>
             </td>
         </tr>
     }

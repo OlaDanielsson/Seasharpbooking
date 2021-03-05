@@ -117,6 +117,15 @@ namespace Seasharpbooking.Controllers
         {
             return View();
         }
+        public async Task<IActionResult> SuperDelete(int? id)
+        {
+            List<BookingModel> bookingList = await ApiConnection.GetBookingList();
+            List<CategoryModel> categoryList = await ApiConnection.GetCategoryList();
+            List<RoomdescModel> roomdescList = await ApiConnection.GetRoomdescList();
+
+            BookingHandler.PlaceCategoryInBooking(bookingList, categoryList, roomdescList); //placerar kategoribeskrivning i bokningslistan
+            return View(bookingList);
+        }
         public async Task<IActionResult> Delete(int id)
         {
             HttpResponseMessage response = ApiConnection.ApiClient.DeleteAsync("BookingModels/" + id.ToString()).Result;
