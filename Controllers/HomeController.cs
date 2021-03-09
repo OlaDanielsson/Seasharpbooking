@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Seasharpbooking.Models;
 using System;
@@ -9,7 +10,8 @@ using System.Threading.Tasks;
 
 namespace Seasharpbooking.Controllers
 {
-    public class HomeController : Controller//hej
+    [Authorize]
+    public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
 
@@ -18,12 +20,12 @@ namespace Seasharpbooking.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index() //Hej det är jag som är Simon
+        public IActionResult Index()
         {
             return View();
         }
 
-        public IActionResult Privacy() // Forsättning
+        public IActionResult Privacy()
         {
             return View();
         }
