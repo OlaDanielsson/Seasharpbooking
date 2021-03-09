@@ -122,14 +122,14 @@ namespace Seasharpbooking.Controllers
             HttpResponseMessage response = ApiConnection.ApiClient.DeleteAsync("BookingModels/" + id.ToString()).Result;
             return RedirectToAction("Index");
         }
-        public async Task<IActionResult> Edit(int id, int GuestId, DateTime StartDate, DateTime EndDate, int CategoryId)
+        public async Task<IActionResult> Edit(int id, int GuestId)
         {
             await ViewbagCategory();
             return View();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, int GuestId, [Bind("Id,CategoryId,StartDate,EndDate,GuestId")] BookingModel booking)
+        public async Task<IActionResult> Edit(int id, int GuestId,[Bind("Id,CategoryId,StartDate,EndDate,GuestId")] BookingModel booking)
         {
 
             //först måste vi ta bort aktuell bokning från den lokala bokningslistan
