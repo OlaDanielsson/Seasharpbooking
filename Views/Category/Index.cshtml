@@ -34,7 +34,7 @@
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ImgList)
+                
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.NumberOfBeds)
@@ -48,7 +48,7 @@
                 @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
             </td>*@
         <td>
-            @*Ändrar från Create till Edit, samt från Category till Room*@
+            @*Ändrar från Create till Edit, samt från Category till Room*@          
             <a href="@Url.Action("Edit", "Category", new { id = item.Id})"> Redigera</a> |
             <a href="@Url.Action("Delete", "Category", new { id = item.Id})"> Ta bort</a>
         </td>
