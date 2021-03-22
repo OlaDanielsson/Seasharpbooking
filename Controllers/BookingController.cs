@@ -143,7 +143,14 @@ namespace Seasharpbooking.Controllers
                 List<RoomdescModel> roomdescList = await ApiConnection.GetRoomdescList();
 
                 BookingHandler.PlaceCategoryInBooking(bookingList, categoryList, roomdescList); //placerar kategoribeskrivning i bokningslistan
-                return View(bookingList);
+                foreach (var item in bookingList)
+                {
+                    if (id == item.Id)
+                    {
+                        return View(item);
+                    }
+                }
+                return RedirectToAction("Index", "Booking");
             }
             catch (Exception ex)
             {
