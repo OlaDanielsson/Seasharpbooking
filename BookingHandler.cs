@@ -1,4 +1,5 @@
-﻿using Seasharpbooking.Models;
+﻿using Microsoft.Extensions.Logging;
+using Seasharpbooking.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,8 +9,9 @@ namespace Seasharpbooking
 {
     public class BookingHandler
     {
+
         public static void PlaceCategoryInBooking(List<BookingModel> bookingList, List<CategoryModel> categoryList, List<RoomdescModel> roomdescList)
-        {
+        {            
             foreach (var item in bookingList)    //placerar kategoribeskrivning i bokningslistan
             {
                 foreach (var element in roomdescList)
@@ -27,7 +29,7 @@ namespace Seasharpbooking
                         }
                     }
                 }
-            }
+            }            
         }
 
         public static bool BookingTest(List<BookingModel> bookingList, List<RoomModel> corcatroom, bool test)

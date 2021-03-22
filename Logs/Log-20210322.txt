@@ -1,0 +1,3 @@
+2021-03-22T14:50:32.0919901+01:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2021-03-22T14:50:32.1053395+01:00  [INF] Hosting environment: "Development" (c3307c92)
+2021-03-22T14:50:32.1072649+01:00  [INF] Content root path: "C:\Users\simon\Source\Repos\SeasharpbookingFinalVersion" (b5d60022)
