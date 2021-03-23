@@ -63,7 +63,13 @@ namespace Seasharpbooking.Controllers
                 ViewData["Desc"] = new SelectList(categoryList, "Id", "Description"); //för att fixa viewdata
                 HttpResponseMessage responseRoom = ApiConnection.ApiClient.GetAsync("CategoryModels/").Result;
 
-                return View(new BookingModel());
+                BookingModel bookingmodel = new BookingModel();
+                DateTime today;
+                today = DateTime.Today;
+                bookingmodel.StartDate = today;
+                bookingmodel.EndDate = today;
+
+                return View(bookingmodel);
             }
             catch (Exception ex)
             {
