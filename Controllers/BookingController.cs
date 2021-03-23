@@ -22,7 +22,7 @@ namespace Seasharpbooking.Controllers
             _logger = logger;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder)
         {
             try
             {
@@ -31,6 +31,10 @@ namespace Seasharpbooking.Controllers
                 List<RoomdescModel> roomdescList = await ApiConnection.GetRoomdescList();
 
                 BookingHandler.PlaceCategoryInBooking(bookingList, categoryList, roomdescList); //placerar kategoribeskrivning i bokningslistan
+
+                ViewDataImport(sortOrder);
+                bookingList = BookingListViewHelper.ColumnSwitch(sortOrder, bookingList);
+
                 return View(bookingList);
             }
             catch (Exception ex)
@@ -38,6 +42,16 @@ namespace Seasharpbooking.Controllers
                 _logger.LogWarning("Could not fetch bookings", ex);
                 return RedirectToAction("Privacy", "Home");
             }
+        }
+
+        private void ViewDataImport(string sortOrder) //Hjälper ColumnSwitch i metoden ovan.
+        {
+            ViewData["BookingIDSortParm"] = String.IsNullOrEmpty(sortOrder) ? "bookingID_descending" : "";
+            ViewData["GuestIDSortParm"] = sortOrder == "GuestID" ? "GuestID_descending" : "GuestID";
+            ViewData["StartDateSortParm"] = sortOrder == "StartDate" ? "StartDate-descending" : "StartDate";
+            ViewData["EndDateSortParm"] = sortOrder == "EndDate" ? "EndDate_descending" : "EndDate";
+            ViewData["RoomTypeSortParm"] = sortOrder == "RoomType" ? "RoomType_descending" : "RoomType";
+            ViewData["RoomIDSortParm"] = sortOrder == "RoomID" ? "RoomID_descending" : "RoomID";
         }
 
         public async Task<IActionResult> Create()
@@ -80,10 +94,6 @@ namespace Seasharpbooking.Controllers
                                         select item);
 
                     List<BookingModel> corcatbooking = new List<BookingModel>();
-
-                    //Används inte än men kan tas tag i imorgon.
-                    //BookingHandler.GetCorCatBookingList(bookingList, corcatbooking, booking.CategoryId); //Hämtar lista med enbart bokningar av korrekta kategori.
-                    //---------------------------------------------------------------------------------------------------------------------------------------------
 
                     BookingHandler.RoomAvailableCheckV2(bookingList, corcatroom, bookingstart, bookingend);
 
