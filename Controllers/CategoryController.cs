@@ -21,6 +21,12 @@ namespace Seasharpbooking.Controllers
             try
             {
                 List<CategoryModel> categoryList = await ApiConnection.GetCategoryList();
+
+                foreach (var item in categoryList)
+                {
+                    item.Path = "http://193.10.202.81/Uploads/" + item.Image;
+                }
+
                 return View(categoryList);
             }
             catch (Exception ex)
