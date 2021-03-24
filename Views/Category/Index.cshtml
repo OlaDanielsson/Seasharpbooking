@@ -34,13 +34,15 @@
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
-                
+                <a href="@item.Path">
+                    <img src="@item.Path" style="height: 100px" />
+                </a>              
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.NumberOfBeds)
+                @Html.DisplayFor(modelItem => item.NumberOfBeds) st
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Price)
+                @Html.DisplayFor(modelItem => item.Price) kr
             </td>
             @*<td>
                 @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
