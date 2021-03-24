@@ -306,3 +306,6 @@ System.InvalidOperationException: The model item passed into the ViewDataDiction
 2021-03-24T16:26:51.2586396+01:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
 2021-03-24T16:26:51.2696299+01:00  [INF] Hosting environment: "Development" (c3307c92)
 2021-03-24T16:26:51.2716921+01:00  [INF] Content root path: "C:\Users\simon\Source\Repos\SeasharpbookingFinalVersion" (b5d60022)
+2021-03-24T16:40:42.2271144+01:00  [INF] Application started. Press Ctrl+C to shut down. (dcaefe54)
+2021-03-24T16:40:42.2434699+01:00  [INF] Hosting environment: "Development" (c3307c92)
+2021-03-24T16:40:42.2462592+01:00  [INF] Content root path: "C:\Users\simon\Source\Repos\SeasharpbookingFinalVersion" (b5d60022)
