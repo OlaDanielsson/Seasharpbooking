@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Seasharpbooking.Models.BookingModel>
+﻿@model PaginatedList<Seasharpbooking.Models.BookingModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -28,38 +28,57 @@
                 <a asp-action="Index" asp-route-sortOrder="@ViewData["RoomIDSortParm"]">RumsID</a>
             </th>
             <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["GuestIDSortParm"]">GästID</a> 
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["GuestIDSortParm"]">GästID</a>
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-   @foreach (var item in Model) {
-        <tr>
-            <td>
-            @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CatDescription)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RoomId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.GuestId)
-            </td>
-            <td>
-                @*Ändrar från Create till Edit, samt från Category till Room*@
-                <a href="@Url.Action("Edit", "Booking", new { id = item.Id, CategoryId = item.CategoryId, EndDate = item.EndDate, StartDate = item.StartDate, GuestId = item.GuestId})"> Redigera</a> |
-                <a href="@Url.Action("SuperDelete", "Booking", new { id = item.Id})"> Ta bort</a>
-            </td>
-        </tr>
-    }
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EndDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CatDescription)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RoomId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GuestId)
+                </td>
+                <td>
+                    @*Ändrar från Create till Edit, samt från Category till Room*@
+                    <a href="@Url.Action("Edit", "Booking", new { id = item.Id, CategoryId = item.CategoryId, EndDate = item.EndDate, StartDate = item.StartDate, GuestId = item.GuestId})"> Redigera</a> |
+                    <a href="@Url.Action("SuperDelete", "Booking", new { id = item.Id})"> Ta bort</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   class="btn btn-default @prevDisabled">
+    Föregående
+</a>
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   class="btn btn-default @nextDisabled">
+    Nästa
+</a>

@@ -22,7 +22,7 @@ namespace Seasharpbooking.Controllers
             _logger = logger;
         }
 
-        public async Task<IActionResult> Index(string sortOrder)
+        public async Task<IActionResult> Index(string sortOrder, int? pageNumber, int pageSize = 5)
         {
             try
             {
@@ -32,10 +32,13 @@ namespace Seasharpbooking.Controllers
 
                 BookingHandler.PlaceCategoryInBooking(bookingList, categoryList, roomdescList); //placerar kategoribeskrivning i bokningslistan
 
+                ViewData["CurrentSort"] = sortOrder;
+
                 ViewDataImport(sortOrder);
                 bookingList = BookingListViewHelper.ColumnSwitch(sortOrder, bookingList);
 
-                return View(bookingList);
+                
+                return View(await PaginatedList<BookingModel>.CreatePaging(bookingList, pageNumber ?? 1, pageSize));
             }
             catch (Exception ex)
             {
@@ -44,7 +47,7 @@ namespace Seasharpbooking.Controllers
             }
         }
 
-        private void ViewDataImport(string sortOrder) //Hjälper ColumnSwitch i metoden ovan.
+        private void ViewDataImport(string sortOrder) //Hjälper ColumnSwitch i Index.
         {
             ViewData["BookingIDSortParm"] = String.IsNullOrEmpty(sortOrder) ? "bookingID_descending" : "";
             ViewData["GuestIDSortParm"] = sortOrder == "GuestID" ? "GuestID_descending" : "GuestID";
@@ -93,7 +96,7 @@ namespace Seasharpbooking.Controllers
                 int bookingend = int.Parse(DateTime.Parse(booking.EndDate.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1)); //parsar datetime till int
                 int dateToday = int.Parse(DateTime.Parse(DateTime.Today.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1));
 
-                if (bookingstart < bookingend && bookingstart >= dateToday) //kollar så bokningens start datum inte är efter slutdatum
+                if (bookingstart < bookingend && bookingstart >= dateToday) //kollar så bokningens startdatum inte är före dagens datum.
                 {
                     corcatroom.AddRange(from item in roomList
                                         where item.CategoryId == booking.CategoryId
@@ -114,8 +117,6 @@ namespace Seasharpbooking.Controllers
                         var result = postTask.Result;
                         return RedirectToAction("Confirmation", "Booking");
                     }
-
-
                     else
                     {
                         ViewData["norooms"] = "Det finns inga lediga rum av din preferenser";
@@ -209,7 +210,6 @@ namespace Seasharpbooking.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, int GuestId,[Bind("Id,CategoryId,StartDate,EndDate,GuestId")] BookingModel booking)
         {
-
             try
             {
                 //först måste vi ta bort aktuell bokning från den lokala bokningslistan
@@ -264,7 +264,6 @@ namespace Seasharpbooking.Controllers
                         await ViewbagCategory();
                         return View();
                     }
-
                 }
                 else
                 {
@@ -277,8 +276,7 @@ namespace Seasharpbooking.Controllers
             {
                 _logger.LogWarning("Could not edit booking: HttpPost", ex);
                 throw;
-            }
-            
+            }            
         }
 
         private async Task ViewbagCategory()
@@ -292,8 +290,7 @@ namespace Seasharpbooking.Controllers
             {
                 _logger.LogWarning("Could not send categories with ViewBag", ex);
                 throw;
-            }
-            
+            }            
         }
     }
 }
