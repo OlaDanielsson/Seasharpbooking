@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Seasharpbooking.Models;
 using System;
@@ -15,6 +16,12 @@ namespace Seasharpbooking.Controllers
     [Authorize]
     public class RoomController : Controller
     {
+        private readonly ILogger<RoomController> _logger;
+
+        public RoomController(ILogger<RoomController> logger)
+        {
+            _logger = logger;
+        }
 
         public async Task<IActionResult> Index()
         {
@@ -38,8 +45,8 @@ namespace Seasharpbooking.Controllers
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex);
-                return RedirectToAction("Privacy", "Home");
+                _logger.LogWarning("Could not send roomDescList", ex);
+                return RedirectToAction("Index", "Home");
             }
         }
 
@@ -59,7 +66,7 @@ namespace Seasharpbooking.Controllers
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
+                _logger.LogWarning("Could not create room: Form", ex);
                 return View();
             }
 
@@ -68,42 +75,78 @@ namespace Seasharpbooking.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(RoomModel room)
         {
-            if (room.Id == 0)
+            try
             {
-                var postTask = ApiConnection.ApiClient.PostAsJsonAsync<RoomModel>("RoomModels", room);
-                postTask.Wait();
+                if (room.Id == 0)
+                {
+                    var postTask = ApiConnection.ApiClient.PostAsJsonAsync<RoomModel>("RoomModels", room);
+                    postTask.Wait();
 
-                var result = postTask.Result;
+                    var result = postTask.Result;
+                }
+
+                return RedirectToAction("Index");
             }
-
-            return RedirectToAction("Index");
+            catch (Exception ex)
+            {
+                _logger.LogWarning("Could not create room: HttpPost", ex);
+                throw;
+            }
+            
         }
 
 
         //Editfunktion om ett rum behöver ändras
         public async Task<IActionResult> Edit(int id)
         {
-            List<CategoryModel> categoryList = await ApiConnection.GetCategoryList();
 
-            ViewData["CategoryId"] = new SelectList(categoryList, "Id", "Description");
+            try
+            {
+                List<CategoryModel> categoryList = await ApiConnection.GetCategoryList();
+
+                ViewData["CategoryId"] = new SelectList(categoryList, "Id", "Description");
 
 
-            HttpResponseMessage responseRoom = ApiConnection.ApiClient.GetAsync("RoomModels/" + id.ToString()).Result;
-            return View(responseRoom.Content.ReadAsAsync<RoomModel>().Result);
+                HttpResponseMessage responseRoom = ApiConnection.ApiClient.GetAsync("RoomModels/" + id.ToString()).Result;
+                return View(responseRoom.Content.ReadAsAsync<RoomModel>().Result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning("Could not edit room: Form", ex);
+                throw;
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> Edit(RoomModel room)
         {
-            HttpResponseMessage response = ApiConnection.ApiClient.PutAsJsonAsync("RoomModels/" + room.Id, room).Result;
-            return RedirectToAction("Index");
+            try
+            {
+                HttpResponseMessage response = ApiConnection.ApiClient.PutAsJsonAsync("RoomModels/" + room.Id, room).Result;
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning("Could not edit room: HttpPost", ex);
+                throw;
+            }
+           
         }
 
 
         public async Task<IActionResult> Delete(int id)
         {
-            HttpResponseMessage response = ApiConnection.ApiClient.DeleteAsync("RoomModels/" + id.ToString()).Result;
-            return RedirectToAction("Index");
+            try
+            {
+                HttpResponseMessage response = ApiConnection.ApiClient.DeleteAsync("RoomModels/" + id.ToString()).Result;
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning("Could not delete room", ex);
+                throw;
+            }
+            
         }
     }
 }

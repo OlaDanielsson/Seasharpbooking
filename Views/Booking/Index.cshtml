@@ -13,22 +13,22 @@
     <thead>
         <tr>
             <th>
-            @*@Html.DisplayNameFor(model => model.Id)*@ Booknings ID
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["BookingIDSortParm"]">BokningsID</a>
             </th>
             <th>
-                @*@Html.DisplayNameFor(model => model.StartDate)*@ Incheckning
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["StartDateSortParm"]">Incheckning</a>
             </th>
             <th>
-                @*@Html.DisplayNameFor(model => model.EndDate)*@ Utcheckning
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["EndDateSortParm"]">Utcheckning</a>
             </th>
             <th>
-                @*@Html.DisplayNameFor(model => model.RoomId)*@ Rums Typ @*Här bör vi kanske ha en länk direkt kopplat till det aktuella rummet*@
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["RoomTypeSortParm"]">Typ av rum</a>
             </th>
             <th>
-                @*@Html.DisplayNameFor(model => model.GuestId)*@ Rums ID @*Gästens för och efternamn*@
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["RoomIDSortParm"]">RumsID</a>
             </th>
             <th>
-                @*@Html.DisplayNameFor(model => model.GuestId)*@ Gäst ID @*Gästens för och efternamn*@
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["GuestIDSortParm"]">GästID</a> 
             </th>
             <th></th>
         </tr>

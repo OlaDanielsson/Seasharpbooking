@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Seasharpbooking.Models.BookingModel>
+﻿@model Seasharpbooking.Models.BookingModel
 
 @{
     ViewData["Title"] = "SuperDelete";
@@ -7,7 +7,60 @@
 <h1>Ta bort</h1>
 <h2>Är du säker på att du vill ta bort denna bokningen?</h2>
 
+
 <table class="table">
+    <thead>
+        <tr>
+            <th>
+                Boknings ID
+            </th>
+            <th>
+                Incheckning
+            </th>
+            <th>
+                Utcheckning
+            </th>
+            <th>
+                Rums Nummer
+            </th>
+            <th>
+                Gäst ID
+            </th>
+            <th>
+                Rums Typ
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        
+        <tr>
+            <td>
+                @Html.DisplayFor(Model => Model.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(Model => Model.StartDate)
+            </td>
+            <td>
+                @Html.DisplayFor(Model => Model.EndDate)
+            </td>
+            <td>
+                @Html.DisplayFor(Model => Model.RoomId)
+            </td>
+            <td>
+                @Html.DisplayFor(Model => Model.GuestId)
+            </td>
+            <td>
+                @Html.DisplayFor(Model => Model.CatDescription)
+            </td>
+            <td>
+                <a href="@Url.Action("Delete", "Booking", new { id = Model.Id})"> Ta bort</a>
+            </td>
+        </tr>
+        
+    </tbody>
+</table>
+@*<table class="table">
     <thead>
         <tr>
             <th>
@@ -58,4 +111,4 @@
         </tr>
 }
     </tbody>
-</table>
+</table>*@
