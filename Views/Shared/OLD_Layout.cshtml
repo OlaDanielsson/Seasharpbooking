@@ -3,22 +3,19 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] Hotell Seasharp | Admin</title>
+    <title>@ViewData["Title"] - KonferensrumAPIConnection</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link href="http://193.10.202.77/css/HotelSeasharp.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" />
-    <link rel="stylesheet" href="~/css/HotelSeasharp.css" />
-
-
 </head>
 <body>
-
+    <img class="kund" src="http://193.10.202.77/images/kund.jpg" />
+    <p style="text-align: right">Kundservice</p>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3" style=" background-color: lightgrey; background: rgba(211, 211, 211, 0.8); height: 40%;
-        width: 100%;">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3" style="background:rgba(255,127,80,0.6); width:100%;">
             <h1 class="rubrik1">Hotell SeaSharp</h1>
 
-            <div class="containeruppe">
+            <div class="container">
                 @*<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Hotell SeaSharp</a>*@
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -27,7 +24,7 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" style="font-weight:bold" asp-area="" asp-controller="Home" asp-action="Index">HEM</a>
+                            <a class="nav-link text-dark" style="font-weight:bold" href="@*LÄNK TILL HEM-SIDA*@">HEM</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" style="font-weight:bold" href="http://193.10.202.77/KonferensrumSida">KONFERENSADMIN</a>
@@ -39,28 +36,29 @@
                             <a class="nav-link text-dark" style="font-weight:bold" href="http://informatik10.ei.hv.se/UserClient">SYSTEMADMIN</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" style="font-weight:bold" href=" http://informatik12.ei.hv.se/resakt/Admin">RESTAURANG/AKTIVITETSADMIN</a>
+                            <a class="nav-link text-dark" style="font-weight:bold" href="http://informatik12.ei.hv.se/resakt/Admin">RESTAURANG- & AKTIVITETADMIN</a>
                         </li>
-                        <li class="dropdown nav-item">
-                            <a class="nav-link text-dark" style="font-weight:bold">BOKNINGSADMIN</a>
-                            <div class="nav-link text-dark dropdown-content">
-                                <a class="dropdown-item" href="http://193.10.202.81/Seasharpadmin/Booking">Bokningar</a>
-                                <a class="dropdown-item" href="http://193.10.202.81/Seasharpadmin/Room">Rum</a>
-                                <a class="dropdown-item" href="http://193.10.202.81/Seasharpadmin/Category">Kategorier</a>
-                            </div>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" style="font-weight:bold" href="http://193.10.202.81/Seasharpadmin/Booking">HANTERA BOKNINGAR</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" style="font-weight:bold" href="http://193.10.202.81/Seasharpadmin/Room">HANTERA RUM</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" style="font-weight:bold" href="http://193.10.202.81/Seasharpadmin/Category">HANTERA KATEGORI</a>
                         </li>
 
                         @if (User?.Identity.IsAuthenticated == true)
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" style="font-weight:bold" asp-area="" asp-controller="Login" asp-action="SignOut">Logga ut</a>
-                            </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" style="font-weight:bold" asp-area="" asp-controller="Login" asp-action="SignOut">Logga ut</a>
+                        </li>
                         }
                         else
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" style="font-weight:bold" asp-area="" asp-controller="Login" asp-action="Index">Logga in</a>
-                            </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" style="font-weight:bold" asp-area="" asp-controller="Login" asp-action="Index">Logga in</a>
+                        </li>
                         }
                     </ul>
                 </div>
@@ -68,21 +66,18 @@
         </nav>
     </header>
     <div class="container">
-        @*<main role="main" class="pb-3">*@
-        @RenderBody()
-        @*</main>*@
+        <main role="main" class="pb-3 form-background">
+            @RenderBody()
+        </main>
     </div>
-
-    <footer class="bottenFooter">
-        <div class="containernere">
+    <footer class="border-top footer text-muted">
+        <div class="container">
             &copy; 2021 - Hotell SeaSharp - <a asp-area="" asp-controller="Home" asp-action="Index">Till första sidan</a>
         </div>
     </footer>
-
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="bootstrap/js/bootstrap.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 
 </body>

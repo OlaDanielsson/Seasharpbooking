@@ -52,7 +52,7 @@ namespace Seasharpbooking.Controllers
                     await SetUserAuthenticated(loginOk);
 
                     //Den ska inte vara med. Bara för att visa att det fungerar
-                    return Redirect("~/Home/Index/");
+                    return Redirect("~/Booking/Index/");
                 }
                 else
                 {

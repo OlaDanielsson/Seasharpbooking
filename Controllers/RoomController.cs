@@ -23,7 +23,7 @@ namespace Seasharpbooking.Controllers
             _logger = logger;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? pageNumber, int pageSize = 5)
         {
             try
             {
@@ -41,7 +41,8 @@ namespace Seasharpbooking.Controllers
                         }
                     }
                 }
-                return View(roomdescList);
+                return View(await PaginatedListRoom<RoomdescModel>.CreatePaging(roomdescList, pageNumber ?? 1, pageSize));
+                //return View(roomdescList);
             }
             catch (Exception ex)
             {
