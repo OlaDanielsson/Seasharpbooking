@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Seasharpbooking.Models;
 using System;
@@ -14,7 +15,14 @@ namespace Seasharpbooking.Controllers
     [Authorize]
     public class BookingController : Controller
     {
-        public async Task<IActionResult> Index()
+        private readonly ILogger<BookingController> _logger;
+
+        public BookingController(ILogger<BookingController> logger)
+        {
+            _logger = logger;
+        }
+
+        public async Task<IActionResult> Index(string sortOrder, int? pageNumber, int pageSize = 5)
         {
             try
             {
@@ -23,13 +31,30 @@ namespace Seasharpbooking.Controllers
                 List<RoomdescModel> roomdescList = await ApiConnection.GetRoomdescList();
 
                 BookingHandler.PlaceCategoryInBooking(bookingList, categoryList, roomdescList); //placerar kategoribeskrivning i bokningslistan
-                return View(bookingList);
+
+                ViewData["CurrentSort"] = sortOrder;
+
+                ViewDataImport(sortOrder);
+                bookingList = BookingListViewHelper.ColumnSwitch(sortOrder, bookingList);
+
+                
+                return View(await PaginatedList<BookingModel>.CreatePaging(bookingList, pageNumber ?? 1, pageSize));
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex);
+                _logger.LogWarning("Could not fetch bookings", ex);
                 return RedirectToAction("Privacy", "Home");
             }
+        }
+
+        private void ViewDataImport(string sortOrder) //Hjälper ColumnSwitch i Index.
+        {
+            ViewData["BookingIDSortParm"] = String.IsNullOrEmpty(sortOrder) ? "bookingID_descending" : "";
+            ViewData["GuestIDSortParm"] = sortOrder == "GuestID" ? "GuestID_descending" : "GuestID";
+            ViewData["StartDateSortParm"] = sortOrder == "StartDate" ? "StartDate-descending" : "StartDate";
+            ViewData["EndDateSortParm"] = sortOrder == "EndDate" ? "EndDate_descending" : "EndDate";
+            ViewData["RoomTypeSortParm"] = sortOrder == "RoomType" ? "RoomType_descending" : "RoomType";
+            ViewData["RoomIDSortParm"] = sortOrder == "RoomID" ? "RoomID_descending" : "RoomID";
         }
 
         public async Task<IActionResult> Create()
@@ -41,11 +66,17 @@ namespace Seasharpbooking.Controllers
                 ViewData["Desc"] = new SelectList(categoryList, "Id", "Description"); //för att fixa viewdata
                 HttpResponseMessage responseRoom = ApiConnection.ApiClient.GetAsync("CategoryModels/").Result;
 
-                return View(new BookingModel());
+                BookingModel bookingmodel = new BookingModel();
+                DateTime today;
+                today = DateTime.Today;
+                bookingmodel.StartDate = today;
+                bookingmodel.EndDate = today;
+
+                return View(bookingmodel);
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
+                _logger.LogWarning("Could not create booking: Form", ex);
                 return View();
             }
         }
@@ -65,17 +96,13 @@ namespace Seasharpbooking.Controllers
                 int bookingend = int.Parse(DateTime.Parse(booking.EndDate.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1)); //parsar datetime till int
                 int dateToday = int.Parse(DateTime.Parse(DateTime.Today.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1));
 
-                if (bookingstart < bookingend && bookingstart >= dateToday) //kollar så bokningens start datum inte är efter slutdatum
+                if (bookingstart < bookingend && bookingstart >= dateToday) //kollar så bokningens startdatum inte är före dagens datum.
                 {
                     corcatroom.AddRange(from item in roomList
                                         where item.CategoryId == booking.CategoryId
                                         select item);
 
                     List<BookingModel> corcatbooking = new List<BookingModel>();
-
-                    //Används inte än men kan tas tag i imorgon.
-                    //BookingHandler.GetCorCatBookingList(bookingList, corcatbooking, booking.CategoryId); //Hämtar lista med enbart bokningar av korrekta kategori.
-                    //---------------------------------------------------------------------------------------------------------------------------------------------
 
                     BookingHandler.RoomAvailableCheckV2(bookingList, corcatroom, bookingstart, bookingend);
 
@@ -90,8 +117,6 @@ namespace Seasharpbooking.Controllers
                         var result = postTask.Result;
                         return RedirectToAction("Confirmation", "Booking");
                     }
-
-
                     else
                     {
                         ViewData["norooms"] = "Det finns inga lediga rum av din preferenser";
@@ -108,108 +133,164 @@ namespace Seasharpbooking.Controllers
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
+                _logger.LogWarning("Could not create booking: HttpPost", ex);
                 return View();
             }
         }
 
         public ActionResult Confirmation()
         {
-            return View();
+            try
+            {
+                return View();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning("Could not show confirmation screen", ex);
+                throw;
+            }
         }
+
         public async Task<IActionResult> SuperDelete(int? id)
         {
-            List<BookingModel> bookingList = await ApiConnection.GetBookingList();
-            List<CategoryModel> categoryList = await ApiConnection.GetCategoryList();
-            List<RoomdescModel> roomdescList = await ApiConnection.GetRoomdescList();
+            try
+            {
+                List<BookingModel> bookingList = await ApiConnection.GetBookingList();
+                List<CategoryModel> categoryList = await ApiConnection.GetCategoryList();
+                List<RoomdescModel> roomdescList = await ApiConnection.GetRoomdescList();
 
-            BookingHandler.PlaceCategoryInBooking(bookingList, categoryList, roomdescList); //placerar kategoribeskrivning i bokningslistan
-            return View(bookingList);
+                BookingHandler.PlaceCategoryInBooking(bookingList, categoryList, roomdescList); //placerar kategoribeskrivning i bokningslistan
+                foreach (var item in bookingList)
+                {
+                    if (id == item.Id)
+                    {
+                        return View(item);
+                    }
+                }
+                return RedirectToAction("Index", "Booking");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning("Could not show delete confirmation screen", ex);
+                throw;
+            }
+            
+
+            
         }
         public async Task<IActionResult> Delete(int id)
         {
-            HttpResponseMessage response = ApiConnection.ApiClient.DeleteAsync("BookingModels/" + id.ToString()).Result;
-            return RedirectToAction("Index");
+            try
+            {
+                HttpResponseMessage response = ApiConnection.ApiClient.DeleteAsync("BookingModels/" + id.ToString()).Result;
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning("Could not delete booking", ex);
+                throw;
+            }           
         }
-        public async Task<IActionResult> Edit(int id, int GuestId, DateTime StartDate, DateTime EndDate, int CategoryId)
+
+        public async Task<IActionResult> Edit(int id, int GuestId)
         {
-            await ViewbagCategory();
-            return View();
+            try
+            {
+                await ViewbagCategory();
+                return View();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning("Could not edit booking: Form", ex);
+                throw;
+            }           
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, int GuestId, [Bind("Id,CategoryId,StartDate,EndDate,GuestId")] BookingModel booking)
+        public async Task<IActionResult> Edit(int id, int GuestId,[Bind("Id,CategoryId,StartDate,EndDate,GuestId")] BookingModel booking)
         {
-
-            //först måste vi ta bort aktuell bokning från den lokala bokningslistan
-            //anropa metod för att kolla om bokningen är möjlig
-            List<RoomModel> roomList = await ApiConnection.GetRoomList();
-            List<BookingModel> bookingList = await ApiConnection.GetBookingList();
-
-            foreach (var item in bookingList)
-            {   
-                if (booking.Id == item.Id)
-                {
-                    bookingList.Remove(item);
-                    break;
-                }                 
-            }
-
-            int bookingstart = int.Parse(DateTime.Parse(booking.StartDate.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1)); //parsar datetime till int
-            int bookingend = int.Parse(DateTime.Parse(booking.EndDate.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1)); //parsar datetime till int
-            int dateToday = int.Parse(DateTime.Parse(DateTime.Today.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1));
-
-            List<RoomModel> corcatroom = new List<RoomModel>();
-
-            if (bookingstart < bookingend && bookingstart >= dateToday) //kollar så bokningens start datum inte är efter slutdatum
+            try
             {
-                corcatroom.AddRange(from item in roomList
-                                    where item.CategoryId == booking.CategoryId
-                                    select item);
+                //först måste vi ta bort aktuell bokning från den lokala bokningslistan
+                //anropa metod för att kolla om bokningen är möjlig
+                List<RoomModel> roomList = await ApiConnection.GetRoomList();
+                List<BookingModel> bookingList = await ApiConnection.GetBookingList();
 
-                //List<BookingModel> corcatbooking = new List<BookingModel>();
-                //Används inte än men kan tas tag i imorgon.
-                //BookingHandler.GetCorCatBookingList(bookingList, corcatbooking, booking.CategoryId); //Hämtar lista med enbart bokningar av korrekta kategori.
-                //---------------------------------------------------------------------------------------------------------------------------------------------
-
-                BookingHandler.RoomAvailableCheckV2(bookingList, corcatroom, bookingstart, bookingend); 
-
-                RoomModel Besterummet = new RoomModel();
-
-                if (corcatroom.Count() > 0)
+                foreach (var item in bookingList)
                 {
-                    Besterummet = corcatroom.First();
+                    if (booking.Id == item.Id)
+                    {
+                        bookingList.Remove(item);
+                        break;
+                    }
+                }
 
-                    BookingModel finalBooking = new BookingModel();
-                    finalBooking.Id = booking.Id;
-                    finalBooking.StartDate = booking.StartDate;
-                    finalBooking.EndDate = booking.EndDate;
-                    finalBooking.RoomId = Besterummet.Id;
-                    finalBooking.GuestId = GuestId;
+                int bookingstart = int.Parse(DateTime.Parse(booking.StartDate.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1)); //parsar datetime till int
+                int bookingend = int.Parse(DateTime.Parse(booking.EndDate.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1)); //parsar datetime till int
+                int dateToday = int.Parse(DateTime.Parse(DateTime.Today.ToString()).ToString().Remove(10, 9).Remove(4, 1).Remove(6, 1));
 
-                    HttpResponseMessage response = ApiConnection.ApiClient.PutAsJsonAsync("BookingModels/" + finalBooking.Id, finalBooking).Result;
-                    return RedirectToAction(nameof(Index));
+                List<RoomModel> corcatroom = new List<RoomModel>();
+
+                if (bookingstart < bookingend && bookingstart >= dateToday) //kollar så bokningens start datum inte är efter slutdatum
+                {
+                    corcatroom.AddRange(from item in roomList
+                                        where item.CategoryId == booking.CategoryId
+                                        select item);
+
+                    //---------------------------------------------------------------------------------------------------------------------------------------------
+
+                    BookingHandler.RoomAvailableCheckV2(bookingList, corcatroom, bookingstart, bookingend);
+
+                    RoomModel Besterummet = new RoomModel();
+
+                    if (corcatroom.Count() > 0)
+                    {
+                        Besterummet = corcatroom.First();
+
+                        BookingModel finalBooking = new BookingModel();
+                        finalBooking.Id = booking.Id;
+                        finalBooking.StartDate = booking.StartDate;
+                        finalBooking.EndDate = booking.EndDate;
+                        finalBooking.RoomId = Besterummet.Id;
+                        finalBooking.GuestId = GuestId;
+
+                        HttpResponseMessage response = ApiConnection.ApiClient.PutAsJsonAsync("BookingModels/" + finalBooking.Id, finalBooking).Result;
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        ViewData["norooms"] = "Det finns inga lediga rum av din preferenser";
+                        await ViewbagCategory();
+                        return View();
+                    }
                 }
                 else
                 {
-                    ViewData["norooms"] = "Det finns inga lediga rum av din preferenser";
+                    ViewData["wrongtime"] = "Denna ändring är inte möjlig";
                     await ViewbagCategory();
-                    return View();
+                    return RedirectToAction("Privacy", "Home");
                 }
-               
             }
-            else
+            catch (Exception ex)
             {
-                ViewData["wrongtime"] = "Denna ändring är inte möjlig";
-                await ViewbagCategory();
-                return RedirectToAction("Privacy","Home");
-            }       
+                _logger.LogWarning("Could not edit booking: HttpPost", ex);
+                throw;
+            }            
         }
 
         private async Task ViewbagCategory()
         {
-            List<CategoryModel> categoryList = await ApiConnection.GetCategoryList();
-            ViewData["Desc"] = new SelectList(categoryList, "Id", "Description"); //för att fixa viewdata
+            try
+            {
+                List<CategoryModel> categoryList = await ApiConnection.GetCategoryList();
+                ViewData["Desc"] = new SelectList(categoryList, "Id", "Description"); //för att fixa viewdata
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning("Could not send categories with ViewBag", ex);
+                throw;
+            }            
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Seasharpbooking.Models.RoomdescModel>
+﻿@model PaginatedListRoom<Seasharpbooking.Models.RoomdescModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -12,42 +12,55 @@
 <table class="table">
     <thead>
         <tr>
-            @*<th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>*@
             <th>
-                @*@Html.DisplayNameFor(model => model.CategoryId)*@ Typ av rum
+                Typ av rum
             </th>
             <th>
-                @*@Html.DisplayNameFor(model => model.Floor)*@ Våning
+                Våning
             </th>
             <th>
-                @*@Html.DisplayNameFor(model => model.RoomNumber)*@ Rumsnummer
+                Rumsnummer
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            @*<td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>*@
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Floor)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RoomNumber)
-            </td>
-            <td>
-                @*Ändrar från Create till Edit, samt från Category till Room*@
-                <a href="@Url.Action("Edit", "Room", new { id = item.Id})"> Redigera</a> |
-                <a href="@Url.Action("Delete", "Room", new { id = item.Id})"> Ta bort</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Floor)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RoomNumber)
+                </td>
+                <td>
+                    @*Ändrar från Create till Edit, samt från Category till Room*@
+                    <a href="@Url.Action("Edit", "Room", new { id = item.Id})"> Redigera</a> |
+                    <a href="@Url.Action("Delete", "Room", new { id = item.Id})"> Ta bort</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   class="btn btn-default @prevDisabled">
+    Föregående
+</a>
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   class="btn btn-default @nextDisabled">
+    Nästa
+</a>

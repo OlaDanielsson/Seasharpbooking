@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Seasharpbooking.Models.BookingModel>
+﻿@model Seasharpbooking.Models.BookingModel
 
 @{
     ViewData["Title"] = "SuperDelete";
@@ -6,6 +6,7 @@
 
 <h1>Ta bort</h1>
 <h2>Är du säker på att du vill ta bort denna bokningen?</h2>
+
 
 <table class="table">
     <thead>
@@ -32,30 +33,30 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+        
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Id)
+                @Html.DisplayFor(Model => Model.Id)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
+                @Html.DisplayFor(Model => Model.StartDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
+                @Html.DisplayFor(Model => Model.EndDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.RoomId)
+                @Html.DisplayFor(Model => Model.RoomId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.GuestId)
+                @Html.DisplayFor(Model => Model.GuestId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CatDescription)
+                @Html.DisplayFor(Model => Model.CatDescription)
             </td>
             <td>
-                <a href="@Url.Action("Delete", "Booking", new { id = item.Id})"> Ta bort</a>
+                <a href="@Url.Action("Delete", "Booking", new { id = Model.Id})"> Ta bort</a>
             </td>
         </tr>
-}
+        
     </tbody>
 </table>

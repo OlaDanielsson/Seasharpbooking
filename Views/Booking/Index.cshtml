@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Seasharpbooking.Models.BookingModel>
+﻿@model PaginatedList<Seasharpbooking.Models.BookingModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -13,53 +13,72 @@
     <thead>
         <tr>
             <th>
-            @*@Html.DisplayNameFor(model => model.Id)*@ Booknings ID
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["BookingIDSortParm"]">BokningsID</a>
             </th>
             <th>
-                @*@Html.DisplayNameFor(model => model.StartDate)*@ Incheckning
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["StartDateSortParm"]">Incheckning</a>
             </th>
             <th>
-                @*@Html.DisplayNameFor(model => model.EndDate)*@ Utcheckning
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["EndDateSortParm"]">Utcheckning</a>
             </th>
             <th>
-                @*@Html.DisplayNameFor(model => model.RoomId)*@ Rums Typ @*Här bör vi kanske ha en länk direkt kopplat till det aktuella rummet*@
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["RoomTypeSortParm"]">Typ av rum</a>
             </th>
             <th>
-                @*@Html.DisplayNameFor(model => model.GuestId)*@ Rums ID @*Gästens för och efternamn*@
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["RoomIDSortParm"]">RumsID</a>
             </th>
             <th>
-                @*@Html.DisplayNameFor(model => model.GuestId)*@ Gäst ID @*Gästens för och efternamn*@
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["GuestIDSortParm"]">GästID</a>
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-   @foreach (var item in Model) {
-        <tr>
-            <td>
-            @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CatDescription)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RoomId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.GuestId)
-            </td>
-            <td>
-                @*Ändrar från Create till Edit, samt från Category till Room*@
-                <a href="@Url.Action("Edit", "Booking", new { id = item.Id, CategoryId = item.CategoryId, EndDate = item.EndDate, StartDate = item.StartDate, GuestId = item.GuestId})"> Redigera</a> |
-                <a href="@Url.Action("SuperDelete", "Booking", new { id = item.Id})"> Ta bort</a>
-            </td>
-        </tr>
-    }
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EndDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CatDescription)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RoomId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GuestId)
+                </td>
+                <td>
+                    @*Ändrar från Create till Edit, samt från Category till Room*@
+                    <a href="@Url.Action("Edit", "Booking", new { id = item.Id, CategoryId = item.CategoryId, EndDate = item.EndDate, StartDate = item.StartDate, GuestId = item.GuestId})"> Redigera</a> |
+                    <a href="@Url.Action("SuperDelete", "Booking", new { id = item.Id})"> Ta bort</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   class="btn btn-default @prevDisabled">
+    Föregående
+</a>
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   class="btn btn-default @nextDisabled">
+    Nästa
+</a>

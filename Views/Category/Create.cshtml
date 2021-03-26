@@ -4,43 +4,43 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1>Skapa kategori</h1>
 
-<h4>CategoryModel</h4>
 <hr />
+<a asp-action="Post" asp-controller="FileUploads">Ladda upp bild!</a>
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
+                <label asp-for="Description" class="control-label">Beskrivning</label>
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-            @*<div class="form-group">
-                <label asp-for="ImgList" class="control-label"></label>
-                <input asp-for="ImgList" class="form-control" />
-                <span asp-validation-for="ImgList" class="text-danger"></span>
-            </div>*@
             <div class="form-group">
-                <label asp-for="NumberOfBeds" class="control-label"></label>
+                <label asp-for="Image" class="control-label">Bild</label>
+                <input asp-for="Image" class="form-control" />
+                <span asp-validation-for="Image" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NumberOfBeds" class="control-label">Antal bäddar</label>
                 <input asp-for="NumberOfBeds" class="form-control" />
                 <span asp-validation-for="NumberOfBeds" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Price" class="control-label"></label>
+                <label asp-for="Price" class="control-label">Pris</label>
                 <input asp-for="Price" class="form-control" />
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Skapa" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Tillbaka</a>
 </div>
 
 @section Scripts {

@@ -4,9 +4,9 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<h1>Redigera</h1>
 
-<h4>CategoryModel</h4>
+
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -18,34 +18,34 @@
                 <span asp-validation-for="Id" class="text-danger"></span>
             </div>*@
             <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
+                <label asp-for="Description" class="control-label">Beskrivning</label>
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ImgList" class="control-label"></label>
-                <input asp-for="ImgList" class="form-control" />
-                <span asp-validation-for="ImgList" class="text-danger"></span>
+                <label asp-for="Image" class="control-label">Bild</label>
+                <input asp-for="Image" class="form-control" />
+                <span asp-validation-for="Image" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="NumberOfBeds" class="control-label"></label>
+                <label asp-for="NumberOfBeds" class="control-label">Antal bäddar</label>
                 <input asp-for="NumberOfBeds" class="form-control" />
                 <span asp-validation-for="NumberOfBeds" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Price" class="control-label"></label>
+                <label asp-for="Price" class="control-label">Pris</label>
                 <input asp-for="Price" class="form-control" />
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
+                <input type="submit" value="Spara" class="btn btn-primary" />
+            </div>              
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Tillbaka</a>
 </div>
 
 @section Scripts {

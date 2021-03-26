@@ -13,16 +13,16 @@
     <thead>
         <tr>
             <th>
-                @*@Html.DisplayNameFor(model => model.Description)*@ Typ av rum
+                Typ av rum
             </th>
             <th>
-                @*@Html.DisplayNameFor(model => model.ImgList)*@ Bild
+                Bild
             </th>
             <th>
-                @*@Html.DisplayNameFor(model => model.NumberOfBeds)*@ Antal bäddar
+                Antal bäddar
             </th>
             <th>
-                @*@Html.DisplayNameFor(model => model.Price)*@ Pris/Dygn
+                Pris/Dygn
             </th>
             <th></th>
         </tr>
@@ -34,21 +34,18 @@
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ImgList)
+                <a href="@item.Path" target="_blank">
+                    <img src="@item.Path" style="height: 100px" />
+                </a>              
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.NumberOfBeds)
+                @Html.DisplayFor(modelItem => item.NumberOfBeds) st
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
-            @*<td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>*@
+                @Html.DisplayFor(modelItem => item.Price) kr
+            </td>            
         <td>
-            @*Ändrar från Create till Edit, samt från Category till Room*@
+            @*Ändrar från Create till Edit, samt från Category till Room*@          
             <a href="@Url.Action("Edit", "Category", new { id = item.Id})"> Redigera</a> |
             <a href="@Url.Action("Delete", "Category", new { id = item.Id})"> Ta bort</a>
         </td>
